@@ -20,7 +20,7 @@ class @Mercury.Panel extends Mercury.Dialog
 
     Mercury.on 'hide:panels', (event, panel) =>
       return if panel == @
-      @button.removeClass('pressed')
+      @button.removeClass('pressed') if @button
       @hide()
 
     @titleElement.find('.mercury-panel-close').on 'click', (event) ->
