@@ -12,6 +12,7 @@ class @Mercury.Lightview
   show: (url, options) ->
     @url = url || @url
     @options = options || @options
+    @options.ujsHandling = true unless @options.ujsHandling == false
 
     Mercury.trigger('focus:window')
     @initializeLightview()
@@ -53,9 +54,10 @@ class @Mercury.Lightview
     @titleElement.find('.mercury-lightview-close').on 'click', =>
       @hide()
 
-    @element.on 'ajax:beforeSend', (event, xhr, options) =>
-      options.success = (content) =>
-        @loadContent(content)
+    if @options.ujsHandling
+      @element.on 'ajax:beforeSend', (event, xhr, options) =>
+        options.success = (content) =>
+          @loadContent(content)
 
     jQuery(document).on 'keydown', (event) =>
        @hide() if event.keyCode == 27 && @visible
@@ -195,6 +197,7 @@ class @Mercury.Lightview
           @initialize()
 
     @element.localize(Mercury.locale()) if Mercury.config.localization.enabled
+    @element.find('.lightview-close').on('click', @hide)
     @resize()
 
 
@@ -202,12 +205,16 @@ class @Mercury.Lightview
     @titleElement.find('span').html(Mercury.I18n(@options.title))
 
 
+  serializeForm: ->
+    return @element.find('form').serializeObject() || {}
+
+
   reset: ->
     @titleElement.find('span').html('')
     @contentElement.html('')
 
 
-  hide: ->
+  hide: =>
     return if @showing
     @options = {}
 

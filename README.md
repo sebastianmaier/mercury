@@ -155,7 +155,7 @@ It's important for saving that an id attribute *always* be set on regions, so yo
       default content
     </div>
 
-For more advanced ways to integrate Mercury Editor with your Rails application check out this
+For more advanced ways to integrate Mercury Editor with your Rails application (such as not using the /editor routing prefix) check out this
 [wiki article](https://github.com/jejacks0n/mercury/wiki/Rails-Integration-Techniques).
 
 ### Using Mercury without Rails
@@ -174,7 +174,7 @@ Mercury does, and provide the most flexibility and visual representation of what
 ### Simple Region
 
 Simple regions are designed for plain text.  Newlines and markup are not allowed.  Simple Regions are appropriate for
-titles, headlines, or any area where you want the conent to be editable but not the style.
+titles, headlines, or any area where you want the content to be editable but not the style.
 
 ### Markdown Region
 

@@ -1,5 +1,7 @@
 source 'http://rubygems.org'
 
+gem 'rails', '3.2.6'
+
 #Dependencies for the dummy app
 gem 'jquery-rails'
 gem 'sqlite3'

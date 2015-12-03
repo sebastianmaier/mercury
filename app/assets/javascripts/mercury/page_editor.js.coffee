@@ -24,12 +24,12 @@ class @Mercury.PageEditor
     @iframe = jQuery('<iframe>', {id: 'mercury_iframe', class: 'mercury-iframe', frameborder: '0', src: 'about:blank'})
     @iframe.appendTo(jQuery(@options.appendTo).get(0) ? 'body')
 
-    @toolbar = new Mercury.Toolbar(@options)
-    @statusbar = new Mercury.Statusbar(@options)
+    @toolbar = new Mercury.Toolbar(jQuery.extend(true, {}, @options, @options.toolbarOptions))
+    @statusbar = new Mercury.Statusbar(jQuery.extend(true, {}, @options, @options.statusbarOptions))
     @resize()
 
-    @iframe.on 'load', => @initializeFrame()
     @iframe.one 'load', => @bindEvents()
+    @iframe.on 'load', => @initializeFrame()
     @loadIframeSrc(null)
 
 
@@ -126,7 +126,7 @@ class @Mercury.PageEditor
     Mercury.on 'action', (event, options) =>
       action = Mercury.config.globalBehaviors[options.action] || @[options.action]
       return unless typeof(action) == 'function'
-      options.already_handled = true
+      event.preventDefault()
       action.call(@, options)
 
     jQuery(window).on 'resize', =>
@@ -236,9 +236,9 @@ class @Mercury.PageEditor
       type: method
       dataType: @options.saveDataType
       data: data
-      success: =>
+      success: (response) =>
         Mercury.changes = false
-        Mercury.trigger('saved')
+        Mercury.trigger('saved', response)
         callback() if typeof(callback) == 'function'
       error: (response) =>
         Mercury.trigger('save_failed', response)

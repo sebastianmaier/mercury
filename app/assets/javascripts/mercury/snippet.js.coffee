@@ -2,13 +2,30 @@ class @Mercury.Snippet
 
   @all: []
 
-  @displayOptionsFor: (name, options = {}) ->
-    Mercury.modal Mercury.config.snippets.optionsUrl.replace(':name', name), jQuery.extend({
-      title: 'Snippet Options'
-      handler: 'insertSnippet'
-      snippetName: name
-    }, options)
+  @displayOptionsFor: (name, options = {}, displayOptions = true) ->
+    if displayOptions
+      Mercury.modal @optionsUrl(name), jQuery.extend({
+        title: 'Snippet Options'
+        handler: 'insertSnippet'
+        snippetName: name
+        loadType: Mercury.config.snippets.method
+      }, options)
+    else
+      snippet = Mercury.Snippet.create(name)
+      Mercury.trigger('action', {action: 'insertSnippet', value: snippet})
     Mercury.snippet = null
+
+
+  @optionsUrl: (name) ->
+    url = Mercury.config.snippets.optionsUrl
+    url = url() if typeof(url) == 'function'
+    return url.replace(':name', name)
+
+
+  @previewUrl: (name) ->
+    url = Mercury.config.snippets.previewUrl
+    url = url() if typeof(url) == 'function'
+    return url.replace(':name', name)
 
 
   @create: (name, options) ->
@@ -66,7 +83,7 @@ class @Mercury.Snippet
 
 
   loadPreview: (element, callback = null) ->
-    jQuery.ajax Mercury.config.snippets.previewUrl.replace(':name', @name), {
+    jQuery.ajax Snippet.previewUrl(@name), {
       headers: Mercury.ajaxHeaders()
       type: Mercury.config.snippets.method
       data: @options
@@ -81,7 +98,7 @@ class @Mercury.Snippet
 
   displayOptions: ->
     Mercury.snippet = @
-    Mercury.modal Mercury.config.snippets.optionsUrl.replace(':name', @name), {
+    Mercury.modal Snippet.optionsUrl(@name), {
       title: 'Snippet Options',
       handler: 'insertSnippet',
       loadType: Mercury.config.snippets.method,
@@ -107,7 +124,4 @@ class @Mercury.Snippet
 
 
   serialize: ->
-    return {
-      name: @name
-      options: @options
-    }
+    return $.extend(@options, {name: @name})
