@@ -21,7 +21,7 @@ class @Mercury.PageEditor
   initializeInterface: ->
     @focusableElement = jQuery('<input>', {class: 'mercury-focusable', type: 'text'}).appendTo(@options.appendTo ? 'body')
 
-    @iframe = jQuery('<iframe>', {id: 'mercury_iframe', class: 'mercury-iframe', frameborder: '0', src: 'about:blank'})
+    @iframe = jQuery('<iframe>', {id: 'mercury_iframe', name: 'mercury_iframe', class: 'mercury-iframe', frameborder: '0', src: 'about:blank'})
     @iframe.appendTo(jQuery(@options.appendTo).get(0) ? 'body')
 
     @toolbar = new Mercury.Toolbar(jQuery.extend(true, {}, @options, @options.toolbarOptions))
@@ -93,7 +93,7 @@ class @Mercury.PageEditor
 
 
   finalizeInterface: ->
-    @santizerElement = jQuery('<div>', {id: 'mercury_sanitizer', contenteditable: 'true', style: 'position:fixed;width:100px;height:100px;top:0;left:-100px;opacity:0;overflow:hidden'})
+    @santizerElement = jQuery('<div>', {id: 'mercury_sanitizer', contenteditable: 'true', style: 'position:fixed;width:100px;height:100px;min-width:0;top:0;left:-100px;opacity:0;overflow:hidden'})
     @santizerElement.appendTo(@options.appendTo ? @document.find('body'))
 
     @snippetToolbar.release() if @snippetToolbar
@@ -177,8 +177,7 @@ class @Mercury.PageEditor
   iframeSrc: (url = null, params = false) ->
     # remove the /editor segment of the url if it gets passed through
     url = (url ? window.location.href).replace(Mercury.config.editorUrlRegEx ?= /([http|https]:\/\/.[^\/]*)\/editor\/?(.*)/i,  "$1/$2")
-    url = url.replace(/[\?|\&]mercury_frame=true/gi, '')
-    url = url.replace(/\&_=i\d+/gi, '')
+    url = url.replace(/[\?|\&]mercury_frame=true/gi, '').replace(/\&_=\d+/gi, '').replace(/#$/, '')
     if params
       # add a param allowing the server to know that the request is coming from mercury
       # and add a cache busting param so we don't get stale content

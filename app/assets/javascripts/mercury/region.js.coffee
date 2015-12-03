@@ -48,8 +48,10 @@ class @Mercury.Region
       @element.html(value)
     else
       # sanitize the html before we return it
-      container = jQuery('<div>').appendTo(@document.createDocumentFragment())
-      container.html(@element.html().replace(/^\s+|\s+$/g, ''))
+      # create the element without jQuery since $el.html() executes <script> tags
+      container = document.createElement('div')
+      container.innerHTML = @element.html().replace(/^\s+|\s+$/g, '')
+      container = $(container)
 
       # replace snippet contents to be an identifier
       if filterSnippets then for snippet in container.find('[data-snippet]')
@@ -94,7 +96,7 @@ class @Mercury.Region
 
   dataAttributes: ->
     data = {}
-    data[attr] = @element.attr('data-' + attr) for attr in Mercury.config.regions.dataAttributes
+    data[attr] = (@container || @element).attr('data-' + attr) for attr in Mercury.config.regions.dataAttributes
     return data
 
 

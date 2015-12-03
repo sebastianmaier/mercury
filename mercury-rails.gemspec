@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
 
   # General Gem Information
   s.name        = 'mercury-rails'
-  s.date        = '2012-06-05'
+  s.date        = '2012-10-19'
   s.version     = Mercury::VERSION
   s.authors     = ['Jeremy Jackson']
   s.email       = ['jejacks0n@gmail.com']
@@ -15,25 +15,9 @@ Gem::Specification.new do |s|
   s.description = %Q{A fully featured and advanced HTML5 WYSIWYG editor written in CoffeeScript on top of the Rails asset pipeline}
   s.licenses    = ['MIT']
 
-
   # Runtime Dependencies
-  s.add_dependency 'railties', '~> 3.2'
-  s.add_dependency 'coffee-rails'
-
-  # Development Dependencies
-  s.add_development_dependency 'sprockets', '~> 2.1'
-  s.add_development_dependency 'uglifier'
-  s.add_development_dependency 'sprockets-rails'
-
-  # Testing dependencies
-  s.add_development_dependency 'rspec-core', '>= 2.8.0'
-  s.add_development_dependency 'evergreen', '>= 1.0.0'
-  s.add_development_dependency 'selenium-webdriver', '>= 2.20.0'
-  s.add_development_dependency 'cucumber-rails', '>= 1.3.0'
-  s.add_development_dependency 'capybara'
-  s.add_development_dependency 'capybara-firebug', '>= 1.1.0'
-  s.add_development_dependency 'aruba'
-  s.add_development_dependency 'database_cleaner'
+  s.add_dependency 'railties', '>= 3.0'
+  s.add_dependency 'coffee-rails', '>= 3.2.2'
 
   # Gem Files
   s.extra_rdoc_files  = %w(LICENSE POST_INSTALL)

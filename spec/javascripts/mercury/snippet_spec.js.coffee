@@ -1,6 +1,7 @@
 describe "Mercury.Snippet", ->
 
-  template 'mercury/snippet.html'
+  beforeEach ->
+    fixture.load('mercury/snippet.html')
 
   afterEach ->
     Mercury.Snippet.all = []
@@ -60,6 +61,12 @@ describe "Mercury.Snippet", ->
       container.html(ret)
       expect($(container.children()[0]).is('li')).toEqual(true)
 
+    it "adds the specified wrapperClass to the wrapperTag", ->
+      @snippet.wrapperClass = 'something'
+      ret = @snippet.getHTML($(document))
+      container = $('<div>')
+      container.html(ret)
+      expect($(container.children()[0]).hasClass('something')).toEqual(true)
 
   describe "#getText", ->
 
@@ -259,15 +266,31 @@ describe "Mercury.Snippet class methods", ->
     it "pushes into the collection array", ->
       Mercury.Snippet.create('foo', {foo: 'bar'})
       expect(Mercury.Snippet.all.length).toEqual(1)
-      
-    describe "when an snuppet exist with an identical identity", ->
+
+    describe "when a snippet exist with an identical identity", ->
       it "generates a unique identity", ->
         Mercury.Snippet.load
-          snippet_1: {name: 'foo', options: {foo: 'bar'}}
-          snippet_2: {name: 'bar', options: {baz: 'pizza'}}
+          snippet_0: {name: 'foo0', options: {foo: 'bar'}}
+          snippet_1: {name: 'foo1', options: {foo: 'bar'}}
+          snippet_3: {name: 'bar3', options: {baz: 'pizza'}}
 
         ret = Mercury.Snippet.create('noobie', {noobie: 'one'})
-        expect(ret.identity).toEqual('snippet_0')
+        expect(ret.identity).toEqual('snippet_2')
+
+      it "generates a unique identity with an un-ordered snippet list", ->
+        Mercury.Snippet.load
+          snippet_0: {name: 'foo0', options: {foo: 'bar'}}
+          snippet_1: {name: 'foo1', options: {foo: 'bar'}}
+          snippet_2: {name: 'foo2', options: {foo: 'bar'}}
+          snippet_12: {name: 'bar12', options: {baz: 'pizza'}}
+          snippet_6: {name: 'bar6', options: {baz: 'pizza'}}
+          snippet_7: {name: 'bar7', options: {baz: 'pizza'}}
+          snippet_3: {name: 'foo3', options: {foo: 'bar'}}
+          snippet_4: {name: 'foo4', options: {foo: 'bar'}}
+          snippet_5: {name: 'foo5', options: {foo: 'bar'}}
+
+        ret = Mercury.Snippet.create('noobie', {noobie: 'one'})
+        expect(ret.identity).toEqual('snippet_8')
 
   describe ".find", ->
 
@@ -285,10 +308,14 @@ describe "Mercury.Snippet class methods", ->
 
     beforeEach ->
       @snippets = {
-        snippet_1: {name: 'foo', options: {foo: 'bar'}}
-        snippet_2: {name: 'bar', options: {baz: 'pizza'}}
+        snippet_1: {name: 'foo', something: {foo: 'bar'}}
+        snippet_2: {name: 'bar', something: {baz: 'pizza'}}
       }
+      Mercury.Snippet.load(@snippets)
 
     it "creates a new instance for each item in the collection", ->
-      Mercury.Snippet.load(@snippets)
       expect(Mercury.Snippet.all.length).toEqual(2)
+
+    it 'sets the options', ->
+      expect(Mercury.Snippet.find('snippet_1').options.something.foo).toEqual('bar')
+

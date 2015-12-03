@@ -1,6 +1,6 @@
 class @Mercury.Regions.Full extends Mercury.Region
-  # No IE support yet because it doesn't follow the W3C standards for HTML5 contentEditable (aka designMode).
-  @supported: document.designMode && !jQuery.browser.konqueror && !jQuery.browser.msie
+  # No IE < 10 support because those versions don't follow the W3C standards for HTML5 contentEditable (aka designMode).
+  @supported: document.designMode && !jQuery.browser.konqueror && (!jQuery.browser.msie || (jQuery.browser.msie && parseFloat(jQuery.browser.version, 10) >= 10))
   @supportedText: "Chrome 10+, Firefox 4+, Safari 5+, Opera 11.64+"
   type = 'full'
   type: -> type
@@ -68,9 +68,10 @@ class @Mercury.Regions.Full extends Mercury.Region
       return if @previewing
       event.preventDefault() unless Mercury.snippet
       event.originalEvent.dataTransfer.dropEffect = 'copy'
-      if jQuery.browser.webkit
-        clearTimeout(@dropTimeout)
-        @dropTimeout = setTimeout((=> @element.trigger('possible:drop')), 10)
+      # removed to fix chrome update issue #362 https://github.com/jejacks0n/mercury/issues/362
+      # if jQuery.browser.webkit
+        # clearTimeout(@dropTimeout)
+        # @dropTimeout = setTimeout((=> @element.trigger('possible:drop')), 10)
 
     @element.on 'drop', (event) =>
       return if @previewing
@@ -92,9 +93,9 @@ class @Mercury.Regions.Full extends Mercury.Region
     # read: http://www.quirksmode.org/blog/archives/2009/09/the_html5_drag.html
     @element.on 'possible:drop', =>
       return if @previewing
-      if snippetPlaceHolder = @element.find('img[data-snippet]').get(0)
+      if Mercury.snippet
         @focus()
-        Mercury.Snippet.displayOptionsFor(jQuery(snippetPlaceHolder).data('snippet'), {}, jQuery(snippetPlaceHolder).data('options'))
+        Mercury.Snippet.displayOptionsFor(Mercury.snippet.name, {}, Mercury.snippet.hasOptions)
         @document.execCommand('undo', false, null)
 
     # custom paste handling: we have to do some hackery to get the pasted content since it's not exposed normally

@@ -29,16 +29,19 @@ class @Mercury.Snippet
 
 
   @create: (name, options) ->
-    if @all.length > 0
-      identity = "snippet_0"
-      for snippet, i in @all
-        identity = "snippet_#{i+1}" if snippet.identity == identity
-    else
-      identity = "snippet_#{@all.length}"
-
-    instance = new Mercury.Snippet(name, identity, options)
+    instance = new Mercury.Snippet(name, @uniqueId(), options)
     @all.push(instance)
     return instance
+
+  @uniqueId: ->
+    [i, identity] = [0, "snippet_0"]
+    identities = (snippet.identity for snippet in @all)
+
+    while identities.indexOf(identity) isnt -1
+      i += 1
+      identity = "snippet_#{i}"
+
+    return identity
 
 
   @find: (identity) ->
@@ -49,7 +52,7 @@ class @Mercury.Snippet
 
   @load: (snippets) ->
     for own identity, details of snippets
-      instance = new Mercury.Snippet(details.name, identity, details.options)
+      instance = new Mercury.Snippet(details.name, identity, details)
       @all.push(instance)
 
 
@@ -62,13 +65,16 @@ class @Mercury.Snippet
     @version = 0
     @data = ''
     @wrapperTag = 'div'
+    @wrapperClass = ''
     @history = new Mercury.HistoryBuffer()
     @setOptions(options)
 
 
   getHTML: (context, callback = null) ->
+    elementClass = "#{@name}-snippet"
+    elementClass += " #{@wrapperClass}" if @wrapperClass
     element = jQuery("<#{@wrapperTag}>", {
-      class: "#{@name}-snippet"
+      class: elementClass
       contenteditable: "false"
       'data-snippet': @identity
       'data-version': @version
@@ -110,6 +116,7 @@ class @Mercury.Snippet
     delete(@options['authenticity_token'])
     delete(@options['utf8'])
     @wrapperTag = @options.wrapperTag if @options.wrapperTag
+    @wrapperClass = @options.wrapperClass if @options.wrapperClass
     @version += 1
     @history.push(@options)
 
@@ -124,4 +131,6 @@ class @Mercury.Snippet
 
 
   serialize: ->
-    return $.extend(@options, {name: @name})
+    return $.extend({name: @name}, @options )
+
+

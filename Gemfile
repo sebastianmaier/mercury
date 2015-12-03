@@ -1,17 +1,28 @@
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.6'
+gemspec
 
-#Dependencies for the dummy app
+# dependencies for the dummy app
+gem 'rails', '>= 3.2.8'
 gem 'jquery-rails'
 gem 'sqlite3'
+gem 'teabag'
 
-# Gems used only for assets and not required
-# in production environments by default.
 group :assets do
   gem 'sass-rails'
-  gem 'coffee-rails'
   gem 'uglifier'
+  gem 'sprockets-rails'
 end
 
-gemspec
+group :development, :test do
+  gem 'rspec-core'
+  gem 'cucumber-rails'
+  gem 'capybara-firebug'
+  gem 'aruba'
+  gem 'database_cleaner'
+
+  # required for travis-ci and linux environments
+  gem "phantomjs-linux" if  RUBY_PLATFORM =~ /linux/
+end
+
+
